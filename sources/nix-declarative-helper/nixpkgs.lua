@@ -5,7 +5,11 @@ gen.name = "nixpkgs"
 --
 --   ["nixpkgs"] = {
 --     "nixpkgs#fastfetch",
+--     "github:guibou/nixGL",
 --   },
+--
+-- A ref may carry an attribute ("nixpkgs#fastfetch") or be a bare flake ref
+-- whose default package is installed ("github:guibou/nixGL").
 --
 -- Backed by `nix profile add/remove` — the same commands the nixos subspace
 -- uses in subspaces_packages, but pinned to the SYSTEM profile
@@ -27,7 +31,10 @@ gen.name = "nixpkgs"
 -- installed form of a ref when its Name matches the ref's last component, or
 -- when its Flake attribute equals that component or ends with "." .. it — so
 -- kdePackages.* (and similar) refs are not re-planned every sync and are
--- removed by their element name, not their attribute tail.
+-- removed by their element name, not their attribute tail. An attribute-less
+-- ref (github:guibou/nixGL) is matched by the listing's Original flake URL
+-- instead, since nix names such an element after the package's own name, which
+-- need not be the ref's tail.
 --
 -- Removals only ever touch refs THIS generator previously declared, recorded
 -- in /var/db/declared-nixpkgs at apply time (mirroring packages-isolated) — a
@@ -44,17 +51,28 @@ local SYSTEM_PROFILE = "/nix/var/nix/profiles/default"
 
 -- Refs are interpolated into shell commands, so accept only word-ish
 -- characters plus the punctuation flake references legitimately use
--- (nixpkgs#fastfetch, github:owner/repo#pkg, path:/srv/flake#pkg).
--- No spaces, quotes, $, backticks, ;|&<> — safe to embed unquoted.
+-- (nixpkgs#fastfetch, github:owner/repo#pkg, path:/srv/flake#pkg,
+-- github:guibou/nixGL). No spaces, quotes, $, backticks, ;|&<> — safe to
+-- embed unquoted. The '#' attribute part is optional: a bare flake ref
+-- installs the flake's default package.
 local function valid_ref(r)
-  return type(r) == "string"
-    and r:match("^[%w%./%:%@%+%#_%-]+$") ~= nil
-    and r:match("^[^#]+#[^#]+$") ~= nil
+  if type(r) ~= "string" or r == "" then return false end
+  if not r:match("^[%w%./%:%@%+%#_%-]+$") then return false end
+  local hash = r:find("#", 1, true)
+  if hash and (hash == 1 or hash == #r or r:find("#", hash + 1, true)) then
+    return false
+  end
+  return true
 end
 
--- The profile element name for a ref (text after the last '#').
+-- The profile element name hint for a ref: the attribute after '#' when
+-- present, otherwise the last path/segment component (github:guibou/nixGL →
+-- nixGL). For attribute-less flake refs the real element name is the package's
+-- own name, so resolve() also matches the listing's Original flake URL.
 local function ref_name(r)
-  return r:match("[^#]+$")
+  local attr = r:match("#([^#]+)$")
+  if attr then return attr end
+  return r:match("([^/:]+)$") or r
 end
 
 local function read_declared(sync)
@@ -116,10 +134,12 @@ function gen.plan(cfg, sync)
   -- Installed profile elements from `nix profile list`. Tolerates both the
   -- Name: block format (nix 2.19+) and older one-line listings. Each block
   -- element is recorded as { name = <Name: field>, attr = <Flake attribute:
-  -- field> } — nix names an element after the package's `name`, which is not
-  -- always the tail of the ref that installed it (nixpkgs#kdePackages.dolphin
-  -- appears as Name: dolphin), so the attribute is kept for resolution too.
-  local elements = {}  -- element name -> { name = ..., attr = ... }
+  -- field>, origin = <Original flake URL: field> } — nix names an element after
+  -- the package's `name`, which is not always the tail of the ref that
+  -- installed it (nixpkgs#kdePackages.dolphin appears as Name: dolphin), so the
+  -- attribute is kept for resolution too. The original URL lets an
+  -- attribute-less ref resolve even when its element name differs.
+  local elements = {}  -- element name -> { name = ..., attr = ..., origin = ... }
   local listing = sync.shell_output("nix profile list --profile " .. SYSTEM_PROFILE)
   local current
   for line in (listing .. "\n"):gmatch("([^\n]+)") do
@@ -131,6 +151,10 @@ function gen.plan(cfg, sync)
     local attr = line:match("^Flake attribute:%s*(%S+)")
     if attr and current then
       current.attr = attr
+    end
+    local origin = line:match("^Original flake URL:%s*(%S+)")
+    if origin and current then
+      current.origin = origin
     end
   end
   -- Older one-line listings carry the installable itself as the profile name;
@@ -144,13 +168,24 @@ function gen.plan(cfg, sync)
     end
   end
 
-  -- Resolve a declared ref to an installed element, if any: by element name,
-  -- or by flake attribute equal to (or ending in "." .. ) the ref's tail.
-  -- Without the attribute match, a kdePackages.*-style ref whose element name
-  -- differs from its attribute tail would be re-planned as an add on every
-  -- sync (nix would just answer "'dolphin' is already added").
+  -- Resolve a declared ref to an installed element, if any.
+  --  * attribute-less flake refs (no '#'): match the listing's Original flake
+  --    URL, because nix names such an element after the package's own name and
+  --    the ref's tail (e.g. the repo name) may not equal it. Fall back to name.
+  --  * attributed refs: by element name, or by flake attribute equal to (or
+  --    ending in "." ..) the ref's tail. Without the attribute match, a
+  --    kdePackages.*-style ref whose element name differs from its attribute
+  --    tail would be re-planned as an add on every sync (nix would just answer
+  --    "'dolphin' is already added").
   local function resolve(ref)
     local tail = ref_name(ref)
+    if not ref:find("#", 1, true) then
+      for _, e in pairs(elements) do
+        if e.origin and e.origin:gsub("/+$", "") == ref:gsub("/+$", "") then
+          return e
+        end
+      end
+    end
     local el = elements[tail]
     if el then return el end
     for _, e in pairs(elements) do

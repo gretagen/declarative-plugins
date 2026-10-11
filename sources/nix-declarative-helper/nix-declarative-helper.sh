@@ -41,6 +41,7 @@ Then declare packages in /etc/haliade/definition.lua:
          ["nixpkgs"] = {
            "nixpkgs#fastfetch",
            "nixpkgs#ripgrep",
+           "github:guibou/nixGL",
          },
 
 Declared packages install into the system profile
