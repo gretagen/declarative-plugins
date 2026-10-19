@@ -1,5 +1,5 @@
 #!/bin/sh
-# nix-declarative-helper — enable declarative nixpkgs declarations in Haliade OS.
+# nix-declarative-helper — enable declarative nixpkgs declarations in Haliade system.
 #
 # The helper ships the "nixpkgs" generator (usr/lib/declaration/generators/
 # nixpkgs.lua) and its plugin config (etc/haliade/plugin-configs/nixpkgs.lua,
@@ -16,7 +16,7 @@ die() {
 
 usage() {
   cat <<'EOF'
-nix-declarative-helper — declare nixpkgs packages in Haliade OS
+nix-declarative-helper — declare nixpkgs packages in Haliade system
 
 Setup (two steps):
 
