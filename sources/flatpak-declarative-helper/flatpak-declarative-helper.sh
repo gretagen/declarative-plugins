@@ -2,7 +2,7 @@
 # flatpak-declarative-helper — enable declarative flatpak apps in Haliade OS.
 #
 # The helper ships the "flatpak" generator (usr/lib/declaration/generators/
-# flatpak.lua) and its plugin config (etc/haliade/plugin-configs/flatpak.lua,
+# flatpak.lua) and its plugin config (etc/nacelle/plugin-configs/flatpak.lua,
 # which gives the section its default + schema so config.lua parses it without
 # anyone editing declaration itself). This script walks you through the two
 # remaining manual steps and the sanity checks around them.
@@ -24,7 +24,7 @@ Setup (two steps):
          flatpak-declarative-helper --verifyflatpak
      (install it with: zeta -Provide flatpak)
 
-  2. Enable the generator: edit /etc/haliade/enabled_modules.lua and add
+  2. Enable the generator: edit /etc/nacelle/enabled_modules.lua and add
      "flatpak" to the list inside the file:
 
          local enabled_generators = {
@@ -33,10 +33,10 @@ Setup (two steps):
          }
 
      The plugin config needed to parse the ["flatpak"] section ships with
-     this package (/etc/haliade/plugin-configs/flatpak.lua) and is loaded
+     this package (/etc/nacelle/plugin-configs/flatpak.lua) and is loaded
      automatically on every sync — no declaration files need editing.
 
-Then declare apps in /etc/haliade/definition.lua:
+Then declare apps in /etc/nacelle/definition.lua:
 
          ["flatpak"] = {
            "flathub:org.mozilla.firefox",
@@ -48,7 +48,7 @@ Apps install system-wide (/var/lib/flatpak), visible to all users. If the
 flathub remote is not configured yet it is added automatically; any other
 missing remote is reported and skipped.
 
-and run:  haliade-synchronize
+and run:  nacelle definition
 
 Commands:
   --help            show this message

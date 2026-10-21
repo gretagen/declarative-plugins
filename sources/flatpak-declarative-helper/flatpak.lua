@@ -12,9 +12,9 @@ gen.name = "flatpak"
 -- root's sync makes the apps visible to every user, not just root's private
 -- user installation. This is the generator shipped by the
 -- flatpak-declarative-helper construct; it only runs when "flatpak" is enabled
--- in /etc/haliade/enabled_modules.lua (see `flatpak-declarative-helper --help`).
+-- in /etc/nacelle/enabled_modules.lua (see `flatpak-declarative-helper --help`).
 -- The ["flatpak"] section's default + schema come from the package's plugin
--- config at /etc/haliade/plugin-configs/flatpak.lua, auto-loaded by config.lua.
+-- config at /etc/nacelle/plugin-configs/flatpak.lua, auto-loaded by config.lua.
 --
 -- A reference is either "remote:appid" (e.g. flathub:org.gnome.Calculator) or
 -- a bare "appid", which is looked up on flathub. When a referenced remote is

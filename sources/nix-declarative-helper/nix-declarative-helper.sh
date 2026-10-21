@@ -2,7 +2,7 @@
 # nix-declarative-helper — enable declarative nixpkgs declarations in Haliade system.
 #
 # The helper ships the "nixpkgs" generator (usr/lib/declaration/generators/
-# nixpkgs.lua) and its plugin config (etc/haliade/plugin-configs/nixpkgs.lua,
+# nixpkgs.lua) and its plugin config (etc/nacelle/plugin-configs/nixpkgs.lua,
 # which gives the section its default + schema so config.lua parses it without
 # anyone editing declaration itself). This script walks you through the two
 # remaining manual steps and the sanity checks around them.
@@ -24,7 +24,7 @@ Setup (two steps):
          nix-declarative-helper --verifynix
      (install it with: zeta -Provide nix)
 
-  2. Enable the generator: edit /etc/haliade/enabled_modules.lua and add
+  2. Enable the generator: edit /etc/nacelle/enabled_modules.lua and add
      "nixpkgs" to the list inside the file:
 
          local enabled_generators = {
@@ -33,10 +33,10 @@ Setup (two steps):
          }
 
      The plugin config needed to parse the ["nixpkgs"] section ships with
-     this package (/etc/haliade/plugin-configs/nixpkgs.lua) and is loaded
+     this package (/etc/nacelle/plugin-configs/nixpkgs.lua) and is loaded
      automatically on every sync — no declaration files need editing.
 
-Then declare packages in /etc/haliade/definition.lua:
+Then declare packages in /etc/nacelle/definition.lua:
 
          ["nixpkgs"] = {
            "nixpkgs#fastfetch",
@@ -47,7 +47,7 @@ Then declare packages in /etc/haliade/definition.lua:
 Declared packages install into the system profile
 (/nix/var/nix/profiles/default), visible to all users.
 
-and run:  haliade-synchronize
+and run:  nacelle definition
 
 Commands:
   --help        show this message

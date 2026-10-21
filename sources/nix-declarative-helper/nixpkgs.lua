@@ -19,10 +19,10 @@ gen.name = "nixpkgs"
 -- (shipped by the nix package) puts the system profile bin on all login
 -- shells. This is the
 -- generator shipped by the nix-declarative-helper construct; it only runs when
--- "nixpkgs" is enabled in /etc/haliade/enabled_modules.lua (see
+-- "nixpkgs" is enabled in /etc/nacelle/enabled_modules.lua (see
 -- `nix-declarative-helper --help`). The ["nixpkgs"] section's default + schema
 -- come from the package's plugin config at
--- /etc/haliade/plugin-configs/nixpkgs.lua, auto-loaded by config.lua.
+-- /etc/nacelle/plugin-configs/nixpkgs.lua, auto-loaded by config.lua.
 --
 -- Additions diff against `nix profile list`. nix names an element after the
 -- package's `name` attribute, which is usually — but not always — the last
