@@ -1,4 +1,4 @@
--- flatpak plugin config — shipped by the flatpak-declarative-helper package.
+-- flatpak plugin config — shipped by the flatpak-generator package.
 --
 -- Auto-loaded by declaration's config.lua on every sync, giving the
 -- ["flatpak"] section its default value and type schema. You normally never

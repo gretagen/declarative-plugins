@@ -1,4 +1,4 @@
--- nixpkgs plugin config — shipped by the nix-declarative-helper package.
+-- nixpkgs plugin config — shipped by the nix-generator package.
 --
 -- Auto-loaded by declaration's config.lua on every sync, giving the
 -- ["nixpkgs"] section its default value and type schema. You normally never

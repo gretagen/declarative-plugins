@@ -11,8 +11,8 @@ gen.name = "flatpak"
 -- Backed by `flatpak install/uninstall --system`: installs are system-wide so
 -- root's sync makes the apps visible to every user, not just root's private
 -- user installation. This is the generator shipped by the
--- flatpak-declarative-helper construct; it only runs when "flatpak" is enabled
--- in /etc/nacelle/enabled_modules.lua (see `flatpak-declarative-helper --help`).
+-- flatpak-generator construct; it only runs when "flatpak" is enabled
+-- in /etc/nacelle/enabled_modules.lua (see `flatpak-generator --help`).
 -- The ["flatpak"] section's default + schema come from the package's plugin
 -- config at /etc/nacelle/plugin-configs/flatpak.lua, auto-loaded by config.lua.
 --
@@ -92,7 +92,7 @@ function gen.plan(cfg, sync)
     return {}
   end
 
-  -- flatpak is optional (see `flatpak-declarative-helper --verifyflatpak`):
+  -- flatpak is optional (see `flatpak-generator --verifyflatpak`):
   -- plan nothing and say why rather than failing the whole sync.
   if sync.shell_output("command -v flatpak") == "" then
     if #desired_list > 0 then

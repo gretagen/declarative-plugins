@@ -1,5 +1,5 @@
 #!/bin/sh
-# flatpak-declarative-helper — enable declarative flatpak apps in Haliade OS.
+# flatpak-generator — enable declarative flatpak apps in Haliade OS.
 #
 # The helper ships the "flatpak" generator (usr/lib/declaration/generators/
 # flatpak.lua) and its plugin config (etc/nacelle/plugin-configs/flatpak.lua,
@@ -16,12 +16,12 @@ die() {
 
 usage() {
   cat <<'EOF'
-flatpak-declarative-helper — declare flatpak apps in Haliade OS
+flatpak-generator — declare flatpak apps in Haliade OS
 
 Setup (two steps):
 
   1. flatpak must be installed — check with:
-         flatpak-declarative-helper --verifyflatpak
+         flatpak-generator --verifyflatpak
      (install it with: zeta -Provide flatpak)
 
   2. Enable the generator: edit /etc/nacelle/enabled_modules.lua and add
@@ -48,7 +48,7 @@ Apps install system-wide (/var/lib/flatpak), visible to all users. If the
 flathub remote is not configured yet it is added automatically; any other
 missing remote is reported and skipped.
 
-and run:  nacelle definition
+and run:  nacelle spin system
 
 Commands:
   --help            show this message
@@ -85,7 +85,7 @@ case "${1:-}" in
     ;;
   *)
     echo "unknown option: $1" >&2
-    echo "run 'flatpak-declarative-helper --help' for usage." >&2
+    echo "run 'flatpak-generator --help' for usage." >&2
     exit 1
     ;;
 esac

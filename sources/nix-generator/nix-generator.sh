@@ -1,5 +1,5 @@
 #!/bin/sh
-# nix-declarative-helper — enable declarative nixpkgs declarations in Haliade system.
+# nix-generator — enable declarative nixpkgs declarations in Haliade system.
 #
 # The helper ships the "nixpkgs" generator (usr/lib/declaration/generators/
 # nixpkgs.lua) and its plugin config (etc/nacelle/plugin-configs/nixpkgs.lua,
@@ -16,12 +16,12 @@ die() {
 
 usage() {
   cat <<'EOF'
-nix-declarative-helper — declare nixpkgs packages in Haliade system
+nix-generator — declare nixpkgs packages in Haliade system
 
 Setup (two steps):
 
   1. nix must be installed — check with:
-         nix-declarative-helper --verifynix
+         nix-generator --verifynix
      (install it with: zeta -Provide nix)
 
   2. Enable the generator: edit /etc/nacelle/enabled_modules.lua and add
@@ -47,7 +47,7 @@ Then declare packages in /etc/nacelle/definition.lua:
 Declared packages install into the system profile
 (/nix/var/nix/profiles/default), visible to all users.
 
-and run:  nacelle definition
+and run:  nacelle spin system
 
 Commands:
   --help        show this message
@@ -84,7 +84,7 @@ case "${1:-}" in
     ;;
   *)
     echo "unknown option: $1" >&2
-    echo "run 'nix-declarative-helper --help' for usage." >&2
+    echo "run 'nix-generator --help' for usage." >&2
     exit 1
     ;;
 esac

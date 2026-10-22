@@ -1,24 +1,24 @@
 return {
-  name    = "flatpak-declarative-helper",
-  version = "1.1",
+  name    = "flatpak-generator",
+  version = "1.2",
   summary = "Declare flatpak apps from definition.lua (extra generator for nacelle)",
-  url     = "https://raw.githubusercontent.com/gretagen/declarative-plugins/refs/heads/main/packages/flatpak-declarative-helper/flatpak-declarative-helper-1.1.tar.gz",
-  sha256  = "378307bc785661f2929ab2517a8776e14ae85d9ba6c331df303a42be29911cc3",
+  url     = "https://raw.githubusercontent.com/gretagen/declarative-plugins/refs/heads/main/packages/flatpak-generator/flatpak-generator-1.2.tar.gz",
+  sha256  = "88c6f383f2939e53da373911651b5c8b0ae402bd03ccc9a8bb8ff678b49ccf59",
   deps    = { "nacelle" },
   archive = { strip = 1 },
   test    = function(p)
     local r = p.install_root
-    p:run("test -x " .. r .. "/usr/bin/flatpak-declarative-helper")
+    p:run("test -x " .. r .. "/usr/bin/flatpak-generator")
     p:run("test -f " .. r .. "/usr/lib/nacelle/generators/flatpak.lua")
     p:run("grep -q -- '--system' " .. r .. "/usr/lib/nacelle/generators/flatpak.lua")
     -- plugin-config ships and registers the section when run in config.lua's env
     p:run("test -f " .. r .. "/etc/nacelle/plugin-configs/flatpak.lua")
     p:run("lua -e 'local fd=assert(io.open(\"" .. r .. "/etc/nacelle/plugin-configs/flatpak.lua\")); local src=fd:read(\"*a\"); fd:close(); local d,s={},{}; local env=setmetatable({defaults=d,schema=s},{__index=_G}); local fn=assert(load(src,\"@flatpak\",\"t\",env)); fn(); assert(d[\"flatpak\"]~=nil and s[\"flatpak\"]==\"table\")'")
     -- help documents the new enable path (no --genconfig anymore)
-    p:run(r .. "/usr/bin/flatpak-declarative-helper --help >/dev/null")
-    p:run(r .. "/usr/bin/flatpak-declarative-helper --help | grep -q enabled_modules.lua")
-    p:run("test \"$(" .. r .. "/usr/bin/flatpak-declarative-helper --help | grep -c genconfig)\" -eq 0")
-    p:run(r .. "/usr/bin/flatpak-declarative-helper --verifyflatpak || :")
+    p:run(r .. "/usr/bin/flatpak-generator --help >/dev/null")
+    p:run(r .. "/usr/bin/flatpak-generator --help | grep -q enabled_modules.lua")
+    p:run("test \"$(" .. r .. "/usr/bin/flatpak-generator --help | grep -c genconfig)\" -eq 0")
+    p:run(r .. "/usr/bin/flatpak-generator --verifyflatpak || :")
     -- generator: a bare appid installs system-wide via flathub; a missing flathub
     -- remote is added first; a missing NON-flathub remote is skipped; a declared
     -- app no longer wanted is uninstalled system-wide (fake shell_output /

@@ -18,9 +18,9 @@ gen.name = "nixpkgs"
 -- profile, which no other user's PATH contains. /etc/profile.d/nix-haliade.sh
 -- (shipped by the nix package) puts the system profile bin on all login
 -- shells. This is the
--- generator shipped by the nix-declarative-helper construct; it only runs when
+-- generator shipped by the nix-generator construct; it only runs when
 -- "nixpkgs" is enabled in /etc/nacelle/enabled_modules.lua (see
--- `nix-declarative-helper --help`). The ["nixpkgs"] section's default + schema
+-- `nix-generator --help`). The ["nixpkgs"] section's default + schema
 -- come from the package's plugin config at
 -- /etc/nacelle/plugin-configs/nixpkgs.lua, auto-loaded by config.lua.
 --
@@ -105,7 +105,7 @@ function gen.plan(cfg, sync)
     return {}
   end
 
-  -- nix is optional (see `nix-declarative-helper --verifynix`): plan nothing
+  -- nix is optional (see `nix-generator --verifynix`): plan nothing
   -- and say why rather than failing the whole sync.
   if sync.shell_output("command -v nix") == "" then
     if #desired_list > 0 then
